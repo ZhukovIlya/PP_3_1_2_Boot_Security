@@ -2,6 +2,7 @@ package ru.kata.spring.boot_security.demo.controller;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -31,13 +32,17 @@ public class AdminController {
 
     @GetMapping(value = "/")
     public String listUsers(Model model) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        model.addAttribute("user", user);
         model.addAttribute("users", userService.listUsers());
-        return "user-list";
+        return "admin-panel";
     }
 
     @GetMapping("/user-create")
     public String createUserForm(Model model) {
+        User user1 = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = new User();
+        model.addAttribute("user1", user1);
         model.addAttribute("user", user);
         return "user-create";
     }
@@ -64,20 +69,7 @@ public class AdminController {
         return "redirect:/admin/";
     }
 
-    @GetMapping("/user-update/{id}")
-    public String updateUserForm(@PathVariable("id") Long id, Model model) {
-        User user = userService.getUserById(id);
-        Set<Role> roles = user.getRoles();
-        for (Role role: roles) {
-            if (role.equals(roleService.getRoleByName("ROLE_ADMIN"))) {
-                model.addAttribute("roleAdmin", true);
-            }
-        }
-        model.addAttribute("user", user);
-        return "user-update";
-    }
-
-    @PostMapping("user-update")
+    @PostMapping("/user-update/{id}")
     public String updateUser(@ModelAttribute("user") User user,
                              @RequestParam(required=false) String roleAdmin){
         Set<Role> roles = new HashSet<>();

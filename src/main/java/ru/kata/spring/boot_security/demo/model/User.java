@@ -21,6 +21,12 @@ public class User implements UserDetails {
     @Column(name = "last_name")
     private String lastName;
 
+    @Column(name = "age")
+    private int age;
+
+    @Column(name = "email")
+    private String email;
+
     @Column(name = "password")
     private String password;
 
@@ -33,14 +39,11 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(String name, String lastName) {
+    public User(String name, String lastName, int age, String email, String password) {
         this.name = name;
         this.lastName = lastName;
-    }
-
-    public User(String name, String lastName, String password) {
-        this.name = name;
-        this.lastName = lastName;
+        this.age = age;
+        this.email = email;
         this.password = password;
     }
 
@@ -80,9 +83,23 @@ public class User implements UserDetails {
         this.roles = roles;
     }
 
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     // методы UserDetails
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles;
@@ -95,7 +112,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return name;
+        return email;
     }
 
     //Указывает, истек ли срок действия учетной записи пользователя.
@@ -120,11 +137,12 @@ public class User implements UserDetails {
         return true;
     }
 
-//    Указывает, включен или отключен пользователь.
+    //    Указывает, включен или отключен пользователь.
 //    true если пользователь включен
     @Override
     public boolean isEnabled() {
         return true;
     }
+
 
 }
